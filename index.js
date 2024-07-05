@@ -27,7 +27,6 @@ const main = async () => {
     }))
     return postData;
   }, url);
-  console.log("Completed");
   await browser.close();
 
   fs.writeFile('post.json', JSON.stringify(Scrapper), (err) => console.log(err))
