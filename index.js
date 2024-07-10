@@ -1,35 +1,24 @@
 const puppeteer = require("puppeteer");
-const fs = require('fs');
-// const url = "https://www.instagram.com/p/C5lecH8NqJS/";
 const url = "https://www.instagram.com/bakchod_gang1/";
-// const url = "https://books.toscrape.com/";
 
 const main = async () => {
-  const browser = await puppeteer.launch({ headless: false });
-  const page = await browser.newPage();
-  await page.goto(
-    url,
-    /* until page loads */
-    { waitUntil: "networkidle2" }
-  );
-  // evaluate() takes all the code from the screen and create a document
-  const Scrapper = await page.evaluate((url) => {
-    const posts = Array.from(
-      document.querySelectorAll(
-        ".x1lliihq .x1n2onr6 .xh8yej3 .x4gyw5p .xfllauq .xo2y696 .x11i5rnm .x2pgyrj"
-      )
-      // document.querySelectorAll(".product_pod")
-    );
-    const postData = posts.map((post) => ({
-        title: post.querySelector('h3 a').getAttribute('title'),
-        price: post.querySelector('.price_color').innerText,
-        imgSrc: url + post.querySelector('img').getAttribute('src')
-    }))
-    return postData;
-  }, url);
-  await browser.close();
+  try {
+    const browser = await puppeteer.launch({ headless: false });
+    const page = await browser.newPage();
+    await page.goto(url, { waitUntil: "networkidle2" });
 
-  fs.writeFile('post.json', JSON.stringify(Scrapper), (err) => console.log(err))
+    await new Promise(resolve => setTimeout(resolve, 8000));
 
+    const Scraper = await page.evaluate(() => {
+      const posts = document.querySelectorAll("article > div > div > div > div");
+      return posts.length;
+    });
+
+    await browser.close();
+    console.log(Scraper);
+  } catch (error) {
+    console.error("Error:", error);
+  }
 };
+
 main();
